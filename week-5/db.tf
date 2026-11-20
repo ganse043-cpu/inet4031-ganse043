@@ -43,7 +43,13 @@ resource "kubernetes_deployment_v1" "db" {
         container {
           name  = "db"
           image = "postgres:16"
-          args  = ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
+          security_context {
+            run_as_user                = 999
+            run_as_group               = 999
+            run_as_non_root            = true
+            allow_privilege_escalation = false
+          }
+          args = ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
 
           port {
             container_port = 5432
